@@ -49,13 +49,42 @@ def start():
     if(clientMode):
         print(bcolors.YELLOW + "Client is attempting to retrieve score from specified server..." + bcolors.ENDC)
 
-        # Change directory into Propane to be somewhat sure of where we are...
         
-        try:
-            request.urlretrieve(serverToConnect + "scores", "propane_scores.txt")
-            print(bcolors.GREEN + bcolors.BOLD + "Score file retrieved, scores have been sync'd!" + bcolors.ENDC)
-        except IOError:
-            print(bcolors.FAIL + bcolors.BOLD + "Could not retrieve score file, check the config.ini to make sure the server is correct!" + bcolors.ENDC)
+        copyfile("propane_scores.txt", "/tmp/scores.bak")
+        fileDidCopy = os.path.isfile("/tmp/scores.bak")
+
+
+        if(fileDidCopy):
+            try:
+                copyfile("/dev/null", "propane_scores.txt")
+                request.urlretrieve(serverToConnect + "scores", "propane_scores.txt")
+                
+                backUpExists = os.path.isfile("/tmp/scores.bak")
+                
+                if(backUpExists):
+                    print(bcolors.YELLOW + "Cleaning up scores.bak from /tmp..." + bcolors.ENDC)
+                    copyfile("/tmp/scores.bak", "propane_scores.txt")
+                    os.remove("/tmp/scores.bak")
+                    backUpExists = os.path.isfile("/tmp/scores.bak")
+
+                    if(backUpExists):
+                        print(bcolors.FAIL + "Failed to delete scores.bak from /tmp! Clean up was not successful..." + bcolors.ENDC)
+                    else:
+                        print(bcolors.GREEN + "Clean up successful!" + bcolors.ENDC)
+                    print(bcolors.GREEN + bcolors.BOLD + "Score file retrieved, scores have been sync'd!" + bcolors.ENDC)
+
+            except IOError:
+            
+                print(bcolors.FAIL + bcolors.BOLD + "Could not retrieve score file, check the config.ini to make sure the server is correct!" + bcolo$
+            
+                backUpExists = os.path.isfile("/tmp/scores.bak")
+            
+                if(backUpExists):
+                    copyfile("/tmp/scores.bak", "propane_scores.txt")
+                    os.remove("/tmp/scores.bak")
+        else:
+
+            print(bcolors.FAIL + bcolors.BOLD + "Could not create scores.bak in /tmp please review your config.ini and file permissions. Scores were $
 
 
     if(serverMode):
